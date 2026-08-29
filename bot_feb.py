@@ -8,9 +8,9 @@ import time
 
 app = Flask(__name__)
 
-TOKEN = "633827893:AAFuHVeSYX6BayMSh13DJgkXpMhfv3dehoo"
-CHAT_ID = "-1001057411639"
-FEED_URL = "https://febnet.org.br/feed/"
+TOKEN = os.environ.get("TELEGRAM_TOKEN")
+CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID")
+FEED_URL = os.environ.get("FEED_URL")
 ARQUIVO_ENVIADOS = "enviados.json"
 
 def carregar_enviados():
@@ -46,7 +46,7 @@ def loop_checagem():
             checar_feed()
         except Exception as e:
             print("Erro:", e)
-        time.sleep(900)  # checa a cada 15 minutos
+        time.sleep(900)
 
 @app.route("/")
 def home():
