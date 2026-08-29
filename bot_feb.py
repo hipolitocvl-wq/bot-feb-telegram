@@ -13,6 +13,8 @@ CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID")
 FEED_URL = os.environ.get("FEED_URL")
 ARQUIVO_ENVIADOS = "enviados.json"
 
+HEADERS = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'}
+
 def carregar_enviados():
     if os.path.exists(ARQUIVO_ENVIADOS):
         with open(ARQUIVO_ENVIADOS, "r") as f:
@@ -32,7 +34,7 @@ def enviar_mensagem(titulo, link):
 
 def checar_feed():
     enviados = carregar_enviados()
-    feed = feedparser.parse(FEED_URL)
+    feed = feedparser.parse(FEED_URL, request_headers=HEADERS)
     novos_enviados = enviados.copy()
     for entrada in reversed(feed.entries):
         if entrada.link not in enviados:
@@ -51,9 +53,10 @@ def loop_checagem():
 @app.route("/")
 def home():
     return "Bot rodando!"
+
 @app.route("/debug")
 def debug():
-    feed = feedparser.parse(FEED_URL)
+    feed = feedparser.parse(FEED_URL, request_headers=HEADERS)
     enviados = carregar_enviados()
     return {
         "token_configurado": bool(TOKEN),
@@ -63,6 +66,7 @@ def debug():
         "ja_enviados": len(enviados),
         "erro_feed": feed.bozo
     }
+
 threading.Thread(target=loop_checagem, daemon=True).start()
 
 if __name__ == "__main__":
