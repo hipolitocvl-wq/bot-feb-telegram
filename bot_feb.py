@@ -51,7 +51,18 @@ def loop_checagem():
 @app.route("/")
 def home():
     return "Bot rodando!"
-
+@app.route("/debug")
+def debug():
+    feed = feedparser.parse(FEED_URL)
+    enviados = carregar_enviados()
+    return {
+        "token_configurado": bool(TOKEN),
+        "chat_id_configurado": bool(CHAT_ID),
+        "feed_url": FEED_URL,
+        "entradas_encontradas": len(feed.entries),
+        "ja_enviados": len(enviados),
+        "erro_feed": feed.bozo
+    }
 threading.Thread(target=loop_checagem, daemon=True).start()
 
 if __name__ == "__main__":
